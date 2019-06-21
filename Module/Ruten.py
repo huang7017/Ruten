@@ -9,23 +9,27 @@ class Ruten:
        self.__res = requests.get(url,headers=self.__headers)
        self.__res.encoding = 'utf-8'
     def getMenu(self):
+        out = []
         soup = BeautifulSoup(self.__res.text,'html.parser')
         stories1 = soup.find_all('h3',class_ = 'item-name isDefault-name')
         stories2 = soup.find_all('span', class_='item-direct-price rt-ml-remove')
-        for s in stories1:
-            self.__table.append(s.text)
-        for s in stories2:
-            self.__money.append(s.text)
+        for i,j in zip(stories1,stories2):
+            self.__table.append(i.text)
+            self.__money.append(j.text)
+
         for i in range(len(self.__table)):
             self.__table[i] = self.__table[i].strip()
-            self.__money[i] = self.__money[i].lstrip()
-        for i in range(len(self.__table)):
-            print('標題:',self.__table[i])
-            print('價錢:', self.__money[i])
+            self.__money[i] = self.__money[i].strip()
+
+        out.append(self.__table)
+        out.append(self.__money)
+        return out
     def getTableSize(self):
         return len(self.__table)
     def getMoneySize(self):
         return len(self.__money)
+    def __str__(self):
+        return str(self.getMenu())
 if __name__ == "__main__":
     obj = Ruten("https://class.ruten.com.tw/user/index00.php?s=hambergurs&fbclid=IwAR1fDwWbVjYNhCySRMeDaSJZk7n-osbtwM7ezSusvn_olPSZLgtsnFbqKyU")
     obj.getMenu()
